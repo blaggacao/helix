@@ -328,82 +328,105 @@ impl DerefMut for Keymaps {
 impl Default for Keymaps {
     fn default() -> Keymaps {
         let normal = keymap!({ "Normal mode"
-            "h" | "left" => move_char_left,
-            "j" | "down" => move_line_down,
-            "k" | "up" => move_line_up,
-            "l" | "right" => move_char_right,
+            "n" | "left" => move_char_left,
+            "e" | "down" => move_line_down,
+            "o" | "up" => move_line_up,
+            "i" | "right" => move_char_right,
+            "A-N" => extend_to_line_bounds,
+            "N" => extend_char_left,
+            "E" => extend_line_down,
+            "O" => extend_line_up,
+            "I" => extend_char_right,
+            "A-I" => extend_line,
 
-            "t" => find_till_char,
-            "f" => find_next_char,
-            "T" => till_prev_char,
-            "F" => find_prev_char,
-            "r" => replace,
-            "R" => replace_with_yanked,
+            // "C-w" => move_next_word_start,
+            // "C-W" => move_next_long_word_start,
+            "C-n" => move_prev_word_start,
+            "C-A-n" => move_prev_long_word_start,
+            "C-i" => move_next_word_end, // TODO CSIu
+            "C-A-i" => move_next_long_word_end, // TODO CSIu
+            "C-N" => extend_prev_word_start, // TODO CSIu
+            "C-I" => extend_next_word_end, // TODO CSIu
 
-            "~" => switch_case,
+            "C-e" => copy_selection_on_next_line,
+            "C-o" => copy_selection_on_prev_line,
+
+            "A-o" => half_page_up,
+            "A-O" | "pageup" => page_up, // TODO interesting issue
+            "A-e" => half_page_down,
+            "A-E" | "pagedown" => page_down,
+
+            "/" => search,
+            // ? for search_reverse
+            "C-A-e" => search_next,
+            "C-A-E" => extend_search_next, // TODO interesting issue
+            // o for search_prev
+            "?" => search_selection,
+
+            "y" => till_prev_char,
+            "Y" => find_prev_char,
+            "j" => find_till_char,
+            "J" => find_next_char,
+
+            "A-`" => switch_case,
             "`" => switch_to_lowercase,
-            "A-`" => switch_to_uppercase,
+            "~" => switch_to_uppercase,
 
             "home" => goto_line_start,
             "end" => goto_line_end,
 
-            "w" => move_next_word_start,
-            "b" => move_prev_word_start,
-            "e" => move_next_word_end,
-
-            "W" => move_next_long_word_start,
-            "B" => move_prev_long_word_start,
-            "E" => move_next_long_word_end,
-
-            "v" => select_mode,
-            "G" => goto_line,
-            "g" => { "Goto"
-                "g" => goto_file_start,
-                "e" => goto_last_line,
-                "h" => goto_line_start,
-                "l" => goto_line_end,
-                "s" => goto_first_nonwhitespace,
-                "d" => goto_definition,
-                "y" => goto_type_definition,
-                "r" => goto_reference,
+            "a" => select_mode,
+            "H" => goto_line,
+            "h" => { "Goto"
+                "n" | "left" => goto_line_start,
+                "e" | "down" => goto_window_bottom,
+                "E" => goto_last_line,
+                "o" | "up" => goto_window_top,
+                "O" => goto_file_start,
+                "i" | "right" => goto_line_end,
+                "I" => goto_first_nonwhitespace,
+                "N" => goto_window_middle,
+                "tab" => goto_last_accessed_file,
+            },
+            "t" => { "Jump to"
+                "n" => goto_definition,
+                "e" => goto_type_definition,
+                "o" => goto_reference,
                 "i" => goto_implementation,
-                "t" => goto_window_top,
-                "m" => goto_window_middle,
-                "b" => goto_window_bottom,
-                "a" => goto_last_accessed_file,
             },
             ":" => command_mode,
 
-            "i" => insert_mode,
-            "I" => prepend_to_line,
-            "a" => append_mode,
-            "A" => append_to_line,
-            "o" => open_below,
-            "O" => open_above,
+            "k" => insert_mode,
+            "K" => prepend_to_line,
+            "l" => append_mode,
+            "L" => append_to_line,
+            "v" => open_below,
+            "V" => open_above,
             // [<space>  ]<space> equivalents too (add blank new line, no edit)
 
             "d" => delete_selection,
             // TODO: also delete without yanking
-            "c" => change_selection,
+            "w" => change_selection,
             // TODO: also change delete without yanking
+            "r" => replace,
+            "R" => replace_with_yanked,
 
-            "C" => copy_selection_on_next_line,
-            "A-C" => copy_selection_on_prev_line,
+            "s" => { "Select"
+                "a" => select_all,
+                "s" => select_regex,
+                "A-s" => keep_selections,
+                "h" => split_selection,
+                "t" => split_selection_on_newline,
+                "tab" => flip_selections,
+                // crop_to_whole_line
+            },
+            "esc" => collapse_selection,
+            "&" => format_selections,
+            "*" => join_selections,
 
-
-            "s" => select_regex,
-            "A-s" => split_selection_on_newline,
-            "S" => split_selection,
-            ";" => collapse_selection,
-            "A-;" => flip_selections,
-            "%" => select_all,
-            "x" => extend_line,
-            "X" => extend_to_line_bounds,
-            // crop_to_whole_line
-
-            "m" => { "Match"
-                "m" => match_brackets,
-                "s" => surround_add,
+            "c" => { "Match"
+                "c" => match_brackets,
+                "k" => surround_add,
                 "r" => surround_replace,
                 "d" => surround_delete,
                 "a" => select_textobject_around,
@@ -418,17 +441,10 @@ impl Default for Keymaps {
                 "D" => goto_last_diag,
             },
 
-            "/" => search,
-            // ? for search_reverse
-            "n" => search_next,
-            "N" => extend_search_next,
-            // N for search_prev
-            "*" => search_selection,
-
             "u" => undo,
             "U" => redo,
 
-            "y" => yank,
+            "f" => yank,
             // yank_all
             "p" => paste_after,
             // paste_all
@@ -436,14 +452,6 @@ impl Default for Keymaps {
 
             ">" => indent,
             "<" => unindent,
-            "=" => format_selections,
-            "J" => join_selections,
-            // TODO: conflicts hover/doc
-            "K" => keep_selections,
-            // TODO: and another method for inverse
-
-            // TODO: clashes with space mode
-            "space" => keep_primary_selection,
 
             // "q" => record_macro,
             // "Q" => replay_macro,
@@ -456,30 +464,17 @@ impl Default for Keymaps {
             "A-(" => rotate_selection_contents_backward,
             "A-)" => rotate_selection_contents_forward,
 
-            "esc" => normal_mode,
-            "C-b" | "pageup" => page_up,
-            "C-f" | "pagedown" => page_down,
-            "C-u" => half_page_up,
-            "C-d" => half_page_down,
-
-            "C-w" => { "Window"
-                "C-w" | "w" => rotate_view,
-                "C-h" | "h" => hsplit,
-                "C-v" | "v" => vsplit,
-                "C-q" | "q" => wclose,
-            },
-
-            // move under <space>c
-            "C-c" => toggle_comments,
-            "K" => hover,
+            // "esc" => normal_mode,
 
             // z family for save/restore/combine from/to sels from register
 
             "tab" => jump_forward, // tab == <C-i>
-            "C-o" => jump_backward,
+            "A-tab" => jump_backward,
             // "C-s" => save_selection,
 
             "space" => { "Space"
+                "c" => toggle_comments,
+                "k" => hover,
                 "f" => file_picker,
                 "b" => buffer_picker,
                 "s" => symbol_picker,
@@ -512,19 +507,19 @@ impl Default for Keymaps {
         });
         let mut select = normal.clone();
         select.merge_nodes(keymap!({ "Select mode"
-            "h" | "left" => extend_char_left,
-            "j" | "down" => extend_line_down,
-            "k" | "up" => extend_line_up,
-            "l" | "right" => extend_char_right,
+            "n" | "left" => extend_char_left,
+            "e" | "down" => extend_line_down,
+            "o" | "up" => extend_line_up,
+            "i" | "right" => extend_char_right,
 
-            "w" => extend_next_word_start,
-            "b" => extend_prev_word_start,
-            "e" => extend_next_word_end,
+            // "w" => extend_next_word_start,
+            "C-n" => extend_prev_word_start,
+            "C-i" => extend_next_word_end,
 
-            "t" => extend_till_char,
-            "f" => extend_next_char,
-            "T" => extend_till_prev_char,
-            "F" => extend_prev_char,
+            "y" => extend_till_prev_char,
+            "Y" => extend_prev_char,
+            "j" => extend_till_char,
+            "J" => extend_next_char,
 
             "home" => goto_line_start,
             "end" => goto_line_end,
@@ -576,9 +571,9 @@ fn merge_partial_keys() {
                     "i" => normal_mode,
                     "无" => insert_mode,
                     "z" => jump_backward,
-                    "g" => { "Merge into goto mode"
+                    "h" => { "Merge into goto mode"
                         "$" => goto_line_end,
-                        "g" => delete_char_forward,
+                        "n" => delete_char_forward,
                     },
                 })
             )
@@ -607,19 +602,19 @@ fn merge_partial_keys() {
     );
     // Assumes that `g` is a node in default keymap
     assert_eq!(
-        keymap.root().search(&[key!('g'), key!('$')]).unwrap(),
+        keymap.root().search(&[key!('h'), key!('$')]).unwrap(),
         &KeyTrie::Leaf(Command::goto_line_end),
         "Leaf should be present in merged subnode"
     );
     // Assumes that `gg` is in default keymap
     assert_eq!(
-        keymap.root().search(&[key!('g'), key!('g')]).unwrap(),
+        keymap.root().search(&[key!('h'), key!('n')]).unwrap(),
         &KeyTrie::Leaf(Command::delete_char_forward),
         "Leaf should replace old leaf in merged subnode"
     );
     // Assumes that `ge` is in default keymap
     assert_eq!(
-        keymap.root().search(&[key!('g'), key!('e')]).unwrap(),
+        keymap.root().search(&[key!('h'), key!('E')]).unwrap(),
         &KeyTrie::Leaf(Command::goto_last_line),
         "Old leaves in subnode should be present in merged node"
     );
