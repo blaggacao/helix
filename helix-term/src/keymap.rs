@@ -343,10 +343,10 @@ impl Default for Keymaps {
             // "C-W" => move_next_long_word_start,
             "C-n" => move_prev_word_start,
             "C-A-n" => move_prev_long_word_start,
-            "C-i" => move_next_word_end, // TODO CSIu
-            "C-A-i" => move_next_long_word_end, // TODO CSIu
-            "C-N" => extend_prev_word_start, // TODO CSIu
-            "C-I" => extend_next_word_end, // TODO CSIu
+            "C-i" => move_next_word_end,
+            "C-A-i" => move_next_long_word_end,
+            "C-N" => extend_prev_word_start,
+            "C-I" => extend_next_word_end,
 
             "C-e" => copy_selection_on_next_line,
             "C-o" => copy_selection_on_prev_line,
@@ -359,7 +359,7 @@ impl Default for Keymaps {
             "/" => search,
             // ? for search_reverse
             "C-A-e" => search_next,
-            "C-A-E" => extend_search_next, // TODO interesting issue
+            "C-A-E" => extend_search_next,
             // o for search_prev
             "?" => search_selection,
 
@@ -469,13 +469,13 @@ impl Default for Keymaps {
             // z family for save/restore/combine from/to sels from register
 
             "tab" => jump_forward, // tab == <C-i>
-            "A-tab" => jump_backward,
+            "backtab" => jump_backward,
             // "C-s" => save_selection,
 
             "space" => { "Space"
                 "c" => toggle_comments,
-                "k" => hover,
-                "f" => file_picker,
+                "h" => hover,
+                "o" => file_picker,
                 "b" => buffer_picker,
                 "s" => symbol_picker,
                 "a" => code_action,
@@ -486,8 +486,8 @@ impl Default for Keymaps {
                     "C-v" | "v" => vsplit,
                     "C-q" | "q" => wclose,
                 },
-                "y" => yank_joined_to_clipboard,
-                "Y" => yank_main_selection_to_clipboard,
+                "f" => yank_joined_to_clipboard,
+                "F" => yank_main_selection_to_clipboard,
                 "p" => paste_clipboard_after,
                 "P" => paste_clipboard_before,
                 "R" => replace_selections_with_clipboard,
